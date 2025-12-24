@@ -12,6 +12,7 @@ export default function BestSellingProducts() {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingRight: 16 }}
+        style={{ paddingBottom: 4 }}
       >
         {[1, 2, 3, 4, 5, 6].map((product) => (
           <Product key={product} horizontal />
