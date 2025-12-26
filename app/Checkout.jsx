@@ -63,103 +63,115 @@ export default function Checkout() {
   }
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: THEME.colors.primary }]}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <TouchableOpacity onPress={() => router.back()} style={{ padding: 8 }}>
-            <Ionicons name="arrow-back" size={24} color="#fff" />
+            <Ionicons name="arrow-back" size={24} color={THEME.colors.primary} />
           </TouchableOpacity>
           <Text style={styles.headerTitleLeft}>Checkout</Text>
         </View>
         <View style={{ width: 28 }} />
       </View>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: THEME.colors.background }}
+        contentContainerStyle={{ paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+      >
 
-      <View style={styles.body}>
-        <Card style={styles.addressCard}>
-          <Text style={{ fontWeight: '700', marginBottom: 6 }}>Delivery Address</Text>
-          {!editingAddress ? (
-            <>
-              <Text>{address}</Text>
-              <Button style={styles.changeBtn} onPress={() => setEditingAddress(true)}>
-                Change
-              </Button>
-            </>
-          ) : (
-            <View>
-              <TextInput value={address} onChangeText={setAddress} style={{ backgroundColor: '#fff', padding: 8, borderRadius: 6 }} />
-              <View style={{ flexDirection: 'row', marginTop: 8 }}>
-                <Button variant="ghost" style={{ flex: 1, marginRight: 8 }} onPress={() => { setEditingAddress(false); }}>
-                  Cancel
+        <View style={styles.body}>
+          <Card style={styles.addressCard}>
+            <Text style={{ fontWeight: '700', marginBottom: 6 }}>Delivery Address</Text>
+            {!editingAddress ? (
+              <>
+                <Text>{address}</Text>
+                <Button style={styles.changeBtn} onPress={() => setEditingAddress(true)}>
+                  Change
                 </Button>
-                <Button style={{ flex: 1 }} onPress={() => setEditingAddress(false)}>
-                  Save
-                </Button>
+              </>
+            ) : (
+              <View>
+                <TextInput value={address} onChangeText={setAddress} style={{ backgroundColor: '#fff', padding: 8, borderRadius: 6 }} />
+                <View style={{ flexDirection: 'row', marginTop: 8 }}>
+                  <Button variant="ghost" style={{ flex: 1, marginRight: 8 }} onPress={() => { setEditingAddress(false); }}>
+                    Cancel
+                  </Button>
+                  <Button style={{ flex: 1 }} onPress={() => setEditingAddress(false)}>
+                    Save
+                  </Button>
+                </View>
               </View>
+            )}
+          </Card>
+
+          <Text style={styles.sectionTitle}>Payment Method</Text>
+          <TouchableOpacity
+            style={[styles.payOption, payment === 'card' && styles.payOptionActive]}
+            onPress={() => setPayment('card')}
+            activeOpacity={0.8}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <View style={styles.payRow}>
+              <Text>Credit/Debit card</Text>
+              <Ionicons name={payment === 'card' ? 'checkmark-circle' : 'ellipse-outline'} size={20} color={payment === 'card' ? THEME.colors.primary : '#999'} />
             </View>
-          )}
-        </Card>
+          </TouchableOpacity>
 
-        <Text style={styles.sectionTitle}>Payment Method</Text>
-        <TouchableOpacity
-          style={[styles.payOption, payment === 'card' && styles.payOptionActive]}
-          onPress={() => setPayment('card')}
-          activeOpacity={0.8}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <View style={styles.payRow}>
-            <Text>Credit/Debit card</Text>
-            <Ionicons name={payment === 'card' ? 'checkmark-circle' : 'ellipse-outline'} size={20} color={payment === 'card' ? THEME.colors.primary : '#999'} />
-          </View>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.payOption, payment === 'upi' && styles.payOptionActive]}
+            onPress={() => setPayment('upi')}
+            activeOpacity={0.8}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <View style={styles.payRow}>
+              <Text>UPI Method</Text>
+              <Ionicons name={payment === 'upi' ? 'checkmark-circle' : 'ellipse-outline'} size={20} color={payment === 'upi' ? THEME.colors.primary : '#999'} />
+            </View>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.payOption, payment === 'upi' && styles.payOptionActive]}
-          onPress={() => setPayment('upi')}
-          activeOpacity={0.8}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <View style={styles.payRow}>
-            <Text>UPI Method</Text>
-            <Ionicons name={payment === 'upi' ? 'checkmark-circle' : 'ellipse-outline'} size={20} color={payment === 'upi' ? THEME.colors.primary : '#999'} />
-          </View>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.payOption, payment === 'cod' && styles.payOptionActive]}
+            onPress={() => setPayment('cod')}
+            activeOpacity={0.8}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <View style={styles.payRow}>
+              <Text>Cash on Delivery</Text>
+              <Ionicons name={payment === 'cod' ? 'checkmark-circle' : 'ellipse-outline'} size={20} color={payment === 'cod' ? THEME.colors.primary : '#999'} />
+            </View>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.payOption, payment === 'cod' && styles.payOptionActive]}
-          onPress={() => setPayment('cod')}
-          activeOpacity={0.8}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <View style={styles.payRow}>
-            <Text>Cash on Delivery</Text>
-            <Ionicons name={payment === 'cod' ? 'checkmark-circle' : 'ellipse-outline'} size={20} color={payment === 'cod' ? THEME.colors.primary : '#999'} />
-          </View>
-        </TouchableOpacity>
-
-        {payment === 'upi' && (
-          <Card style={{ marginTop: 12 }}>
-            <Text style={{ fontWeight: '700', marginBottom: 6 }}>UPI Options</Text>
+          {payment === 'upi' && (
+            <Card style={{ marginTop: 12 }}>
+              <Text style={{ fontWeight: '700', marginBottom: 6 }}>UPI Options</Text>
               <Text>Paytm / Google Pay / PhonePe</Text>
               <Text style={{ marginTop: 6, color: THEME.colors.subtext }}>Tap a provider below to open your UPI app and pay.</Text>
               <View style={{ flexDirection: 'row', marginTop: 10 }}>
                 <Button style={{ flex: 1, marginRight: 8 }} onPress={() => handleUPIPayment('paytm')}>Pay with Paytm</Button>
                 <Button style={{ flex: 1 }} onPress={() => handleUPIPayment('gpay')}>Pay with GPay</Button>
               </View>
-          </Card>
-        )}
+            </Card>
+          )}
 
-        <OrderSummary totals={totals} buttonLabel="Place Order" onProceed={placeOrder} />
-      </View>
-    </ScrollView>
+          <OrderSummary totals={totals} buttonLabel="Place Order" onProceed={placeOrder} />
+        </View>
+      </ScrollView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  header: { height: 110, paddingTop: 44, flexDirection: 'row', alignItems: 'center', paddingHorizontal: THEME.spacing.md, justifyContent: 'space-between' },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff"
+  },
+  header: { height: 40, paddingTop: 44, flexDirection: 'row', alignItems: 'center', paddingHorizontal: THEME.spacing.md, justifyContent: 'space-between' },
   headerLeft: { flexDirection: 'row', alignItems: 'center', marginTop: -50 },
-  headerTitleLeft: { color: '#fff', fontSize: THEME.fonts.title, fontWeight: '700', marginLeft: THEME.spacing.sm },
-  body: { padding: THEME.spacing.md },
+  headerTitleLeft: { color: THEME.colors.primary, fontSize: THEME.fonts.title, fontWeight: '700', marginLeft: THEME.spacing.sm, marginTop: 2 },
+  body: {
+    padding: THEME.spacing.md,
+    paddingBottom: 10 // important for scroll
+  },
   addressCard: { position: 'relative' },
   changeBtn: { position: 'absolute', right: 16, top: 12 },
   sectionTitle: { color: '#fff', fontSize: THEME.fonts.title, fontWeight: '700', marginBottom: THEME.spacing.sm, marginTop: THEME.spacing.md },
