@@ -4,3 +4,4 @@ import './global.css';
 export default function Index() {
   return <Redirect href="./(tabs)/Home" />;
 }
+   

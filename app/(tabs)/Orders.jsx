@@ -8,10 +8,14 @@ import Card from '../../Components/ui/Card'
 import { THEME } from '../../Components/ui/theme'
 import ordersData from '../../testing/OrdersTestData.json'
 import productsData from '../../testing/ProductsTestData.json'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useFocusEffect } from '@react-navigation/native'
+import { useCallback, useState } from 'react'
 
 export default function Orders() {
   const router = useRouter();
   const { addItem } = useCart();
+  const [orders, setOrders] = useState([]); 
 
   const handleReorder = (order) => {
     order.items.forEach(it => {
@@ -22,10 +26,27 @@ export default function Orders() {
     router.push('/(tabs)/Cart');
   }
 
+  const loadOrders = async () => {
+    try {
+      const raw = await AsyncStorage.getItem('orders');
+      if (raw) {
+        setOrders(JSON.parse(raw));
+      } else {
+        setOrders(ordersData);
+      }
+    } catch (e) {
+      setOrders(ordersData);
+    }
+  }
+
+  useFocusEffect(useCallback(() => {
+    loadOrders();
+  }, []));
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.pageTitle}>Orders</Text>
-      {ordersData.map((o) => {
+      {orders.map((o) => {
         const subtotal = o.items.reduce((s, it) => {
           const p = productsData.find(pp => String(pp.id) === String(it.productId));
           return s + (p?.price || 0) * it.quantity;
