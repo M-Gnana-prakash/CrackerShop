@@ -61,7 +61,7 @@ export default function Profile() {
       <TouchableOpacity
         style={styles.logoutBtn}
         onPress={() => console.log("logout pressed")}
-        className="mb-5"
+        className="mb-3"
       >
         <Text style={styles.logoutText}>LOGOUT</Text>
       </TouchableOpacity>
