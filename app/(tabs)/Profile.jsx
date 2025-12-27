@@ -22,7 +22,7 @@ export default function Profile() {
     {
       title: 'Account Settings',
       items: [
-        { icon: 'create-outline', label: 'Edit Profile', onPress: () => navigation.navigate('EditProfile') },
+        { icon: 'create-outline', label: 'Edit Profile', onPress: () => navigation.navigate('ProfileEdit') },
         { icon: 'location-outline', label: 'Saved Address', onPress: () => navigation.navigate('SavedAddress') },
         { icon: 'card-outline', label: 'Payment Method', onPress: () => navigation.navigate('Payment') },
         { icon: 'settings-outline', label: 'Settings', onPress: () => navigation.navigate('Settings') },
