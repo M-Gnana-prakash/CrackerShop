@@ -1,16 +1,25 @@
+import { router } from 'expo-router';
 import {
-  Dimensions,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
-  Text,
+  Text
 } from 'react-native';
 import { FireworkDecoration } from '../../Components/LoginComponents/FireworkDecoration';
 import { LoginCard } from '../../Components/LoginComponents/LoginCard';
 import { THEME } from '../../Components/ui/theme';
+import users from "../../testing/UserTestData.json";
 
 export default function Login() {
-  const handleLogin = (email, password) => {
-    console.log('Login clicked', { email, password });
+  const handleLogin = async (email, password) => {
+    const user = users.find(u => u.email === email && u.password === password);
+    if (user) {
+      Alert.alert('Login Successful', `Welcome back, ${email}!`);
+    } else {
+      Alert.alert('Login Failed', 'Invalid email or password.');
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -23,48 +32,37 @@ export default function Login() {
 
   const handleForgetPassword = () => {
     console.log('Forget password clicked');
+    router.push('/(auth)/ForgetPassword');
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      style={styles.scrollView}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      {/* Firework Decorations */}
-      <FireworkDecoration
-        top={40}
-        left={20}
-        width={100}
-        height={100}
-      />
-      
-      <FireworkDecoration
-        top={60}
-        right={30}
-        width={120}
-        height={120}
-        opacity={0.8}
-      />
+      <ScrollView
+        contentContainerStyle={styles.container}
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* Firework Decorations */}
+        <FireworkDecoration top={40} left={20} width={100} height={100} />
+        <FireworkDecoration top={60} right={30} width={120} height={120} opacity={0.8} />
+        <FireworkDecoration top={200} right={60} width={80} height={80} opacity={0.5} />
 
-      <FireworkDecoration
-        top={200}
-        right={60}
-        width={80}
-        height={80}
-        opacity={0.5}
-      />
+        {/* Header Title */}
+        <Text style={styles.headerTitle}>Name</Text>
 
-      {/* Header Title */}
-      <Text style={styles.headerTitle}>Name</Text>
-
-      {/* Login Card */}
-      <LoginCard
-        onLogin={handleLogin}
-        onGoogleLogin={handleGoogleLogin}
-        onSignUp={handleSignUp}
-        onForgetPassword={handleForgetPassword}
-      />
-    </ScrollView>
+        {/* Login Card */}
+        <LoginCard
+          onLogin={handleLogin}
+          onGoogleLogin={handleGoogleLogin}
+          onSignUp={handleSignUp}
+          onForgetPassword={handleForgetPassword}
+        />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -76,11 +74,9 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
+    paddingHorizontal: 20,
     paddingVertical: 40,
-    backgroundColor: '#FF4444',
-    minHeight: Dimensions.get('window').height,
+    backgroundColor: THEME.colors.primary,
   },
   headerTitle: {
     fontSize: 36,
