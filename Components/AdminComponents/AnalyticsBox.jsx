@@ -2,7 +2,7 @@ import { Text, View } from 'react-native'
 
 export default function AnalyticsBox({ icon, label, amount, isIncrease, percentage }) {
     return (
-        <View className="w-52 h-40 bg-gray-100 rounded-2xl p-5">
+        <View className="w-52 h-40 bg-white rounded-2xl p-5">
             <View className="flex-row items-center justify-between">
                 <View className="w-10 h-10 bg-white rounded-full items-center justify-center">
                     {icon}
