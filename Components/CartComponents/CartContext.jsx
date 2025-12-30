@@ -5,11 +5,10 @@ const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
   // seed with some items for demo purposes
+  // seed with some items for demo purposes
   const initial = [
     { product: productsData[0], quantity: 1 },
-    { product: productsData[1], quantity: 2 },
-    { product: productsData[6], quantity: 1 },
-  ];
+  ].filter(item => item.product); // Filter out any undefined products just in case
 
   const [cartItems, setCartItems] = useState(initial);
 

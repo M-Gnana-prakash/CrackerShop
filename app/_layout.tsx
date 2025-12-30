@@ -9,7 +9,7 @@ export default function RootLayout() {
       <StatusBar style="dark" />
       <CartProvider>
         <Stack
-          screenOptions={{ 
+          screenOptions={{
             headerShown: false,
           }}
         > 
