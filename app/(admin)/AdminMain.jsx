@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from 'expo-router';
 import { useState } from 'react';
-import { Dimensions, ScrollView, Text, View } from 'react-native';
+import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Dropdown } from 'react-native-element-dropdown';
 import AnalyticsBox from '../../Components/AdminComponents/AnalyticsBox';
@@ -11,6 +12,8 @@ const screenWidth = Dimensions.get("window").width;
 
 export default function AdminMain() {
     const [value, setValue] = useState('1'); // Default to 'This Week'
+
+    const navigation = useNavigation();
 
     // Mock data based on the period selection
     const chartDataMap = {
@@ -29,9 +32,9 @@ export default function AdminMain() {
     };
 
     const analyticsBoxDetails = [
-        { icon: <Ionicons name="cash" size={24} color="#FF6B00" />, label: 'Total Sales', amount: '$12,345', isIncrease: true, percentage: '8.5%' },
-        { icon: <Ionicons name="people" size={24} color="#FF6B00" />, label: 'Total Users', amount: '1,234', isIncrease: false, percentage: '2.1%' },
-        { icon: <Ionicons name="cart" size={24} color="#FF6B00" />, label: 'Total Orders', amount: '567', isIncrease: true, percentage: '5.4%' },
+        { icon: <Ionicons name="cash" size={24} color="#FF6B00" />, label: 'Total Sales', price: '$12,345', isIncrease: true, percentage: '8.5%' },
+        { icon: <Ionicons name="people" size={24} color="#FF6B00" />, label: 'Total Users', price: '1,234', isIncrease: false, percentage: '2.1%' },
+        { icon: <Ionicons name="cart" size={24} color="#FF6B00" />, label: 'Total Orders', price: '567', isIncrease: true, percentage: '5.4%' },
     ];
 
     const dropdownData = [
@@ -41,10 +44,36 @@ export default function AdminMain() {
     ];
 
     const quickActionItems = [
-        { icon: <Ionicons name="add" size={24} color="#FF6B00" />, label: 'Add Product' },
-        { icon: <Ionicons name="cart" size={24} color="#FF6B00" />, label: 'Products' },
-        { icon: <Ionicons name="person" size={24} color="#FF6B00" />, label: 'Users' },
-        { icon: <Ionicons name="settings" size={24} color="#FF6B00" />, label: 'Settings' },
+        { icon: <Ionicons name="add" size={24} color="#FF6B00" />, label: 'Add Product', onPress: () => { navigation.navigate('AddNewProduct') } },
+        { icon: <Ionicons name="cart" size={24} color="#FF6B00" />, label: 'Products', onPress: () => { navigation.navigate('Inventory') } },
+        { icon: <Ionicons name="person" size={24} color="#FF6B00" />, label: 'Users', onPress: () => { navigation.navigate('Users') } },
+        { icon: <Ionicons name="settings" size={24} color="#FF6B00" />, label: 'Settings', onPress: () => { navigation.navigate('Settings') } },
+        { icon: <Ionicons name="wallet" size={24} color="#FF6B00" />, label: 'Chit Fund', onPress: () => { navigation.navigate('ChitManagement') } },
+        { icon: <Ionicons name="grid" size={24} color="#FF6B00" />, label: 'Categories', onPress: () => { navigation.navigate('Categories') } },
+    ]
+
+    const recentOrders = [
+        {
+            name: 'Product Name',
+            orderId: 'Order ID',
+            time: new Date().getMinutes() + ' ' + new Date().getHours(),
+            price: '$123',
+            isPaid: true,
+        },
+        {
+            name: 'Product Name',
+            orderId: 'Order ID',
+            time: new Date().getMinutes() + ' ' + new Date().getHours(),
+            price: '$123',
+            isPaid: true,
+        },
+        {
+            name: 'Product Name',
+            orderId: 'Order ID',
+            time: new Date().getMinutes() + ' ' + new Date().getHours(),
+            price: '$123',
+            isPaid: false,
+        },
     ]
 
     return (
@@ -121,23 +150,36 @@ export default function AdminMain() {
                 </View>
                 <View className="mt-8 w-11/12">
                     <Text className="text-xl font-bold ">Quick Actions</Text>
-                    <View className="flex-row items-center justify-between mt-5">
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 16, paddingHorizontal: 16 }}>
                         {
                             quickActionItems.map((item, index) => (
-                                <View key={index} className="flex-coloumns items-center justify-center">
+                                <TouchableOpacity
+                                    key={index}
+                                    className="flex-coloumns items-center justify-center"
+                                    onPress={item.onPress}
+                                >
                                     <View className="bg-white rounded-full p-2 w-16 h-16 items-center justify-center">
                                         {item.icon}
                                     </View>
                                     <Text className="text-center mt-1">{item.label}</Text>
-                                </View>
+                                </TouchableOpacity>
                             ))
                         }
-                    </View>
+                    </ScrollView>
                 </View>
                 <View className="w-11/12">
-                    <Text className="text-xl font-bold mt-8">Recent Orders</Text>
+                    <View className="flex-row items-center justify-between mt-8 mb-2">
+                        <Text className="text-xl font-bold">Recent Orders</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('Orders')}>
+                            <Text className="text-sm font-bold text-orange-500">View All</Text>
+                        </TouchableOpacity>
+                    </View>
                     <View className="">
-                        <RecentOrdersCard />
+                        {
+                            recentOrders.map((order, index) => (
+                                <RecentOrdersCard key={index} {...order} />
+                            ))
+                        }
                     </View>
                 </View>
             </View>
