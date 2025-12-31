@@ -23,7 +23,7 @@ export default function AddCategory() {
             </View>
 
             <ScrollView className="flex-1 bg-gray-50 p-5" showsVerticalScrollIndicator={false}>
-                <View className="bg-white rounded-xl p-5 mb-5 shadow-sm border border-gray-100 space-y-4 gap-4">
+                <View className="bg-white rounded-xl p-5 mb-5 shadow-sm border border-100 space-y-4 gap-4">
 
                     {/* Image Placeholder */}
                     <TouchableOpacity className="h-40 bg-gray-100 rounded-xl items-center justify-center border-2 border-dashed border-gray-300">

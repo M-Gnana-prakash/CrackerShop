@@ -15,19 +15,10 @@ export default function Profile() {
   const navigation = useNavigation();
 
   const sections = [
-    {
-      title: "My Chit",
-      items: [
-        {
-          icon: "wallet-outline",
-          label: "Chit Balance",
-          onPress: () => navigation.navigate("Chit"),
-        },
-      ],
-    },
 
+    /* ================= ACCOUNT SETTINGS ================= */
     {
-      title: "Account Settings",
+      title: "Account Settings ",
       items: [
         {
           icon: "create-outline",
@@ -42,51 +33,15 @@ export default function Profile() {
       ],
     },
 
-    /* ✅ APP + ABOUT US DETAILS */
+    /* ================= APP ================= */
     {
       title: "App",
       items: [
         {
           icon: "information-circle-outline",
           label: "About CrackerShop",
-          message: "Quality crackers at best price",
+          onPress: () => navigation.navigate("AboutUs"),
         },
-        {
-          icon: "call-outline",
-          label: "Mobile Number",
-          message: "+91 98765 43210",
-          onPress: () => Linking.openURL("tel:+919876543210"),
-        },
-        {
-          icon: "home-outline",
-          label: "Address",
-          message: "No.12, Main Road, Sivakasi",
-        },
-        {
-          icon: "business-outline",
-          label: "District",
-          message: "Virudhunagar",
-        },
-        {
-          icon: "map-outline",
-          label: "State",
-          message: "Tamil Nadu",
-        },
-        {
-          icon: "mail-outline",
-          label: "Pincode",
-          message: "626123",
-        },
-        {
-          icon: "navigate-outline",
-          label: "View Location",
-          onPress: () =>
-            Linking.openURL(
-              "https://www.google.com/maps/search/?api=1&query=Sivakasi+Tamil+Nadu"
-            ),
-        },
-
-        /* SHARE */
         {
           icon: "share-social-outline",
           label: "Share App",
@@ -96,13 +51,11 @@ export default function Profile() {
                 message:
                   "Check out CrackerShop — download the app: https://example.com/download",
               });
-            } catch (err) {
-              console.log(err);
+            } catch (error) {
+              console.log(error);
             }
           },
         },
-
-        /* DOWNLOADS */
         {
           icon: "document-text-outline",
           label: "Download Price List (PDF)",
@@ -129,16 +82,18 @@ export default function Profile() {
         >
           <Ionicons name="arrow-back" size={26} color="#fff" />
         </TouchableOpacity>
-
         <Text style={styles.pageTitle}>Profile</Text>
       </View>
 
+      {/* PROFILE AVATAR */}
       <ProfileAvatar />
 
+      {/* PROFILE OPTIONS */}
       <View style={{ flex: 1 }}>
         <ProfileCard sections={sections} />
       </View>
 
+      {/* LOGOUT */}
       <TouchableOpacity
         style={styles.logoutBtn}
         onPress={() => console.log("logout pressed")}
@@ -149,6 +104,7 @@ export default function Profile() {
   );
 }
 
+/* ================= STYLES ================= */
 const styles = StyleSheet.create({
   container: {
     flex: 1,

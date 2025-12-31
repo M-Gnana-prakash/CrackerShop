@@ -78,12 +78,14 @@ export default function AdminMain() {
 
     return (
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-            <View className="items-center pb-10">
+            <View className="items-center pb-10 bg-orange-50 pt-1">
+                
 
                 {/* Header */}
                 <View className="flex-row items-center justify-center mt-5">
                     <Text className="text-xl font-bold">Admin</Text>
                     <Text className="text-xl font-bold" style={{ color: THEME.colors.primary }}>Panel</Text>
+                    
                 </View>
 
                 {/* Good Morning Box */}
@@ -104,13 +106,12 @@ export default function AdminMain() {
                     ))}
                 </ScrollView>
 
-                {/* Sales Analytics Section */}
                 <View className="w-11/12 mt-8 p-4 bg-white rounded-3xl shadow-sm border border-gray-100">
                     <View className="flex-row items-center justify-between mb-4">
                         <View>
                             <Text className="text-gray-400 text-xs">Total Revenue</Text>
-                            <Text className="text-black text-xl font-bold">$21,450</Text>
-                            <Text className="text-green-500 text-xs font-bold">+12.5%</Text>
+                            <Text className="text-black text-xl font-bold">21,450</Text>
+                            <Text className="text-green-500 text-xs font-bold">12.5%</Text>
                         </View>
 
                         <View className="w-32">
