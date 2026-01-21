@@ -2,13 +2,15 @@ import { useRouter, useSegments } from 'expo-router';
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { AppState, Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { notificationsAPI } from '../api';
 import { useAuth } from './AuthContext';
 
 // Configure how notifications behave when the app is in foreground
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
-        shouldShowAlert: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
         shouldPlaySound: true,
         shouldSetBadge: false,
     }),
@@ -65,6 +67,13 @@ export const NotificationProvider = ({ children }) => {
     }, [isAuthenticated, user?.role]);
 
     const registerForPushNotificationsAsync = async () => {
+        // Android Push Notification support was removed from Expo Go in SDK 53.
+        // We must skip this setup if running in Expo Go to avoid the crash.
+        if (Constants.executionEnvironment === ExecutionEnvironment.StoreClient) {
+            console.log("Push notifications are not supported in Expo Go (SDK 53+). Using local polling only.");
+            return;
+        }
+
         if (Platform.OS === 'android') {
             await Notifications.setNotificationChannelAsync('default', {
                 name: 'default',
