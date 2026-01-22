@@ -3,8 +3,13 @@ const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const path = require('path');
+const cluster = require('cluster');
+const os = require('os');
 const connectDB = require('./config/db');
 const logger = require('./utils/logger');
+
+// Load env vars
+dotenv.config({ path: process.env.NODE_ENV === 'production' ? '.env.production' : '.env' });
 
 // Security middleware
 const {
@@ -19,8 +24,26 @@ const {
     trustProxy
 } = require('./middleware/security');
 
-// Load env vars
-dotenv.config({ path: process.env.NODE_ENV === 'production' ? '.env.production' : '.env' });
+// Clustering setup for production
+const numCPUs = os.cpus().length;
+const enableClustering = process.env.NODE_ENV === 'production' && process.env.ENABLE_CLUSTERING !== 'false';
+
+if (enableClustering && cluster.isMaster) {
+    logger.info(`Master process ${process.pid} starting workers...`, { cpuCount: numCPUs });
+    
+    // Fork workers
+    for (let i = 0; i < numCPUs; i++) {
+        cluster.fork();
+    }
+    
+    // Handle worker exits
+    cluster.on('exit', (worker, code, signal) => {
+        logger.warn(`Worker ${worker.process.pid} died (${signal || code}). Restarting...`);
+        cluster.fork();
+    });
+    
+    return;  // Master process doesn't need to continue
+}
 
 // Validate critical environment variables
 const requiredEnvVars = ['MONGO_URI', 'JWT_SECRET', 'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];

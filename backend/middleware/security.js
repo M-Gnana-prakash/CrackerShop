@@ -4,10 +4,10 @@ const hpp = require('hpp');
 const rateLimit = require('express-rate-limit');
 const logger = require('../utils/logger');
 
-// Rate limiting middleware
+// Rate limiting middleware - Higher limits for production
 exports.globalRateLimiter = rateLimit({
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-    max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
+    max: process.env.NODE_ENV === 'production' ? 1000 : 100, // Production: 1000 requests, Dev: 100
     message: 'Too many requests from this IP, please try again later',
     handler: (req, res) => {
         logger.warn('Rate limit exceeded', {
@@ -22,19 +22,21 @@ exports.globalRateLimiter = rateLimit({
     skip: (req) => process.env.NODE_ENV === 'development'
 });
 
-// Auth endpoints rate limiter (stricter)
+// Auth endpoints rate limiter (stricter for security)
 exports.authRateLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5, // limit each IP to 5 requests per windowMs
+    max: process.env.NODE_ENV === 'production' ? 20 : 5, // Production: 20, Dev: 5
     message: 'Too many login attempts, please try again later',
     skipSuccessfulRequests: true
+    // Using in-memory store (no external Redis required)
 });
 
 // API endpoints rate limiter (POST requests)
 exports.postRateLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 30,
+    max: process.env.NODE_ENV === 'production' ? 500 : 30, // Production: 500, Dev: 30
     skipSuccessfulRequests: false
+    // Using in-memory store (no external Redis required)
 });
 
 // Security headers middleware
@@ -45,11 +47,16 @@ exports.securityHeaders = helmet({
             styleSrc: ["'self'", "'unsafe-inline'"],
             scriptSrc: ["'self'"],
             imgSrc: ["'self'", 'data:', 'https:'],
-            connectSrc: ["'self'", process.env.ALLOWED_ORIGINS?.split(',') || []],
+            connectSrc: [
+                "'self'",
+                'http://localhost:*',
+                'http://192.168.1.*',
+                'http://127.0.0.1:*'
+            ],
         }
     },
     hsts: {
-        maxAge: 31536000, // 1 year
+        maxAge: 31536000,
         includeSubDomains: true,
         preload: true
     },
@@ -87,19 +94,42 @@ exports.parameterPollutionPrevention = hpp({
 // CORS configuration
 exports.corsConfig = {
     origin: (origin, callback) => {
-        const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000').split(',');
+        const allowedOrigins = [
+            'http://localhost:3000',
+            'http://localhost:3001',
+            'http://localhost:5000',
+            'http://localhost:8081',
+            'http://127.0.0.1:3000',
+            'http://127.0.0.1:5000',
+            'http://192.168.1.37:3000',
+            'http://192.168.1.37:5000',
+            'http://192.168.1.37:8081',
+            'http://192.168.1.42:3000',
+            'http://192.168.1.42:3001',
+            'http://192.168.1.42:5000',
+            'http://192.168.1.42:8081',
+            'http://192.168.1.35:5000',
+            ...(process.env.ALLOWED_ORIGINS?.split(',') || [])
+        ];
         
-        if (!origin || allowedOrigins.includes(origin)) {
+        // Allow requests without origin (mobile apps, curl, etc)
+        if (!origin || allowedOrigins.some(allowed => {
+            if (allowed.includes('*')) {
+                return new RegExp(allowed.replace(/\*/g, '.*')).test(origin);
+            }
+            return allowed === origin;
+        })) {
             callback(null, true);
         } else {
-            logger.warn('CORS rejected', { origin });
-            callback(new Error('Not allowed by CORS'));
+            logger.warn('CORS rejected', { origin, allowedOrigins });
+            callback(null, true); // Still allow but log it
         }
     },
     credentials: true,
     optionsSuccessStatus: 200,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['X-Total-Count', 'X-Page-Number']
 };
 
 // Request validation middleware

@@ -7,14 +7,16 @@ const MAX_RETRIES = 3;
 const connectDB = async () => {
     try {
         const mongoOptions = {
-            maxPoolSize: 10,
-            minPoolSize: 5,
+            maxPoolSize: process.env.NODE_ENV === 'production' ? 50 : 10,  // Production: 50 connections
+            minPoolSize: process.env.NODE_ENV === 'production' ? 20 : 5,   // Production: 20 min
             serverSelectionTimeoutMS: 5000,
             socketTimeoutMS: 45000,
             maxIdleTimeMS: 60000,
             retryWrites: true,
             w: 'majority',
-            connectTimeoutMS: 10000
+            connectTimeoutMS: 10000,
+            maxConnecting: 10,  // Max simultaneous connection attempts
+            family: 4  // IPv4 (more stable)
         };
 
         const conn = await mongoose.connect(process.env.MONGO_URI, mongoOptions);

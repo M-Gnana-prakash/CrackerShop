@@ -23,10 +23,13 @@ export default function AdminMain() {
     const [stats, setStats] = useState({
         totalSales: 0,
         totalOrders: 0,
-        totalUsers: 0 // We don't have user API yet broadly used or public count
+        totalUsers: 0
     });
     const [chartGrowth, setChartGrowth] = useState(0);
     const [allOrdersCache, setAllOrdersCache] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [retryCount, setRetryCount] = useState(0);
 
     const handleLogout = async () => {
         Alert.alert(
@@ -55,8 +58,13 @@ export default function AdminMain() {
         }, [])
     );
 
-    const fetchDashboardData = async () => {
+    const fetchDashboardData = async (retrying = false) => {
         try {
+            if (!retrying) {
+                setIsLoading(true);
+                setError(null);
+            }
+
             // Check for users count (assuming users API exists and we have admin access)
             const usersRes = await api.get('/users');
             let totalUsers = 0;
@@ -142,10 +150,30 @@ export default function AdminMain() {
 
                 // Process chart data
                 processChartData(allOrders);
+                setIsLoading(false);
             }
         } catch (error) {
             console.error('Dashboard fetch error:', error);
+            const errorMsg = error?.message || 'Failed to load dashboard data';
+            setError(errorMsg);
+            setIsLoading(false);
+            
+            // Auto-retry logic: retry up to 3 times with exponential backoff
+            if (retryCount < 3 && !retrying) {
+                const delayMs = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
+                console.warn(`Retrying dashboard fetch in ${delayMs}ms... (attempt ${retryCount + 1}/3)`);
+                setTimeout(() => {
+                    setRetryCount(prev => prev + 1);
+                    fetchDashboardData(true);
+                }, delayMs);
+            }
         }
+    };
+
+    const handleRetry = () => {
+        setRetryCount(0);
+        setError(null);
+        fetchDashboardData();
     };
 
     const [chartData, setChartData] = useState({
@@ -317,6 +345,26 @@ export default function AdminMain() {
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
             <View className="items-center pb-10 bg-orange-50 pt-1">
 
+                {/* Loading State */}
+                {isLoading && (
+                    <View className="w-11/12 mt-5 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                        <Text className="text-center text-blue-700 font-medium">Loading dashboard data...</Text>
+                    </View>
+                )}
+
+                {/* Error State with Retry */}
+                {error && (
+                    <View className="w-11/12 mt-5 p-4 bg-red-50 rounded-xl border border-red-200">
+                        <Text className="text-red-700 font-semibold mb-2">Error Loading Dashboard</Text>
+                        <Text className="text-red-600 text-sm mb-3">{error}</Text>
+                        <TouchableOpacity 
+                            onPress={handleRetry}
+                            className="bg-red-500 rounded-lg py-2 px-4"
+                        >
+                            <Text className="text-white text-center font-medium">Retry</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
 
                 {/* Header */}
                 <View className="flex-row items-center justify-between w-11/12 mt-5">

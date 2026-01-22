@@ -11,7 +11,7 @@ const getBaseURL = () => {
         return 'http://localhost:5000/api/v1';
     }
     // For Physical Device/Emulator
-    return 'http://192.168.1.35:5000/api/v1';
+    return 'http://192.168.1.37:5000/api/v1';
 };
 
 const API_BASE_URL = getBaseURL();
@@ -19,7 +19,7 @@ const API_BASE_URL = getBaseURL();
 // Create axios instance
 const api = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 10000,
+    timeout: 20000, // Increased from 10000ms to 20000ms (20 seconds)
     headers: {
         'Content-Type': 'application/json',
     },
@@ -61,13 +61,42 @@ api.interceptors.response.use(
 
             if (status === 401) {
                 await AsyncStorage.removeItem('user');
+                // Log detailed error for debugging
+                console.error('[API 401] Unauthorized:', {
+                    endpoint: error.config?.url,
+                    message: errorMessage,
+                    timestamp: new Date().toISOString()
+                });
+            } else if (status === 403) {
+                console.error('[API 403] Forbidden:', {
+                    endpoint: error.config?.url,
+                    message: errorMessage,
+                    timestamp: new Date().toISOString()
+                });
+            } else if (status >= 500) {
+                console.error('[API 5XX] Server Error:', {
+                    endpoint: error.config?.url,
+                    status: status,
+                    message: errorMessage,
+                    timestamp: new Date().toISOString()
+                });
             }
         } else if (error.request) {
-            // Request made but no response
-            errorMessage = 'Network error. Please check your connection.';
+            // Request made but no response - likely network issue
+            errorMessage = 'Network error. Please check your connection and server is running.';
+            console.error('[API Network Error]:', {
+                message: errorMessage,
+                baseURL: API_BASE_URL,
+                timeout: api.defaults.timeout,
+                timestamp: new Date().toISOString()
+            });
         } else {
             // Something else happened
             errorMessage = error.message || 'Something went wrong';
+            console.error('[API Error]:', {
+                message: errorMessage,
+                timestamp: new Date().toISOString()
+            });
         }
 
         return Promise.reject(new Error(errorMessage));

@@ -15,7 +15,7 @@ export default function Orders() {
     const [searchQuery, setSearchQuery] = useState('');
     const [orders, setOrders] = useState([]);
 
-    const timeFilters = ['All Time', 'Today', 'This Week', 'This Month'];
+    const timeFilters = ['All Time', 'Today', 'Week', 'Month'];
 
     useEffect(() => {
         if (params.search) {
