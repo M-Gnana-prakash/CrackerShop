@@ -21,6 +21,14 @@ pnpm-debug.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.env.example
+*.env
+**/.env
+**/.env.*
+backend/.env
+backend/.env.*
+frontend/.env
+frontend/.env.*
 
 ############################
 # React Native & Expo
