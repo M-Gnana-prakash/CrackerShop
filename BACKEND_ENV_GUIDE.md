@@ -31,10 +31,10 @@ This document provides comprehensive information about your CrackerShop project'
 NODE_ENV=production
 PORT=5000
 MONGO_URI=mongodb://localhost:27017/crackershop
-CLOUDINARY_CLOUD_NAME=df4hlnpjh
-CLOUDINARY_API_KEY=738834461672894
-CLOUDINARY_API_SECRET=9P--Kp6ff4R6fwyY6ecQzzooSW4
-JWT_SECRET=5a07a5a6f64ae706285d3b39ef416deb04781f6196bf2eb11c60a80945cdfbad
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+JWT_SECRET=replace_with_a_strong_random_secret
 ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8081,http://192.168.1.37:8081
 LOG_LEVEL=debug
 ```
@@ -56,10 +56,10 @@ LOG_LEVEL=debug
 NODE_ENV=development
 PORT=5000
 MONGO_URI=mongodb://localhost:27017/CrackerShop
-CLOUDINARY_CLOUD_NAME=df4hlnpjh
-CLOUDINARY_API_KEY=738834461672894
-CLOUDINARY_API_SECRET=9P--Kp6ff4R6fwyY6ecQzzooSW4
-JWT_SECRET=5a07a5a6f64ae706285d3b39ef416deb04781f6196bf2eb11c60a80945cdfbad
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+JWT_SECRET=replace_with_a_strong_random_secret
 LOG_LEVEL=debug
 ```
 
@@ -81,10 +81,10 @@ LOG_LEVEL=debug
 NODE_ENV=production
 PORT=5000
 MONGO_URI=mongodb://production-db-url:27017/crackershop
-CLOUDINARY_CLOUD_NAME=df4hlnpjh
-CLOUDINARY_API_KEY=738834461672894
-CLOUDINARY_API_SECRET=9P--Kp6ff4R6fwyY6ecQzzooSW4
-JWT_SECRET=production-specific-secret-key
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+JWT_SECRET=replace_with_a_strong_random_secret
 ALLOWED_ORIGINS=https://yourdomain.com
 LOG_LEVEL=info
 ENABLE_CLUSTERING=true
